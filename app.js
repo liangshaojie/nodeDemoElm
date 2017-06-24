@@ -2,6 +2,14 @@ import express from 'express';
 import db from './mongodb/db.js';
 import config from 'config-lite';
 import router from './routes/index.js';
+import cookieParser from 'cookie-parser'
+import session from 'express-session';
+import Statistic from './middlewares/statistic'
+import connectMongo from 'connect-mongo';
+import winston from 'winston';
+import expressWinston from 'express-winston';
+import path from 'path';
+import history from 'connect-history-api-fallback';
 
 const app = express();
 
@@ -18,8 +26,50 @@ app.all('*', (req, res, next) => {
     }
 });
 
-// app.listen(config.port);
 
+app.use(Statistic.apiRecord)
+const MongoStore = connectMongo(session);
+app.use(cookieParser());
+app.use(session({
+    name: config.session.name,
+    secret: config.session.secret,
+    resave: true,
+    saveUninitialized: false,
+    cookie: config.session.cookie,
+    store: new MongoStore({
+        url: config.url
+    })
+}))
+
+app.use(expressWinston.logger({
+    transports: [
+        new (winston.transports.Console)({
+            json: true,
+            colorize: true
+        }),
+        new winston.transports.File({
+            filename: 'logs/success.log'
+        })
+    ]
+}));
+
+
+app.use(expressWinston.errorLogger({
+    transports: [
+        new winston.transports.Console({
+            json: true,
+            colorize: true
+        }),
+        new winston.transports.File({
+            filename: 'logs/error.log'
+        })
+    ]
+}));
+app.use(history());
+app.use(express.static('./public'));
+app.use((err, req, res, next) => {
+    res.status(404).send('未找到当前路由');
+});
 
 router(app);
 

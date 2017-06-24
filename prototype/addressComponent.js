@@ -18,7 +18,7 @@ class AddressComponent extends BaseComponent {
 		return new Promise(async (resolve, reject) => {
 			let ip = req.headers['x-forwarded-for'] || 
 	 		req.connection.remoteAddress || 
-	 		req.socket.remoteAddress ||
+                req.socket.remoteAddress ||
 	 		req.connection.socket.remoteAddress;
 	 		const ipArr = ip.split(':');
 	 		ip = ipArr[ipArr.length -1];

@@ -33,7 +33,6 @@ citySchema.statics.cityGuess = function(name){
 
 citySchema.statics.cityHot = function (){
     return new Promise(async (resolve, reject) => {
-        console.log('进来了');
         try{
             const city = await this.findOne();
             resolve(city.data.hotCities)
@@ -69,6 +68,7 @@ citySchema.statics.getCityById = function(id){
     return new Promise(async (resolve, reject) => {
         try{
             const city = await this.findOne();
+            // Object.entries 对象转成数组
             Object.entries(city.data).forEach(item => {
                 if(item[0] !== '_id' && item[0] !== 'hotCities'){
                     item[1].forEach(cityItem => {

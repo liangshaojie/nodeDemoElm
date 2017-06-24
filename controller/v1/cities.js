@@ -22,12 +22,9 @@ class CityHandle extends AddressComponent{
                     cityInfo = await Cities.cityGuess(city);
                     break;
                 case 'hot':
-                    // console.log( Cities.cityHot);
                     cityInfo = await Cities.cityHot();
                     break;
                 case 'group':
-                    console.log('group');
-                    console.log(Cities);
                     cityInfo = await Cities.cityGroup();
                     break;
                 default:
