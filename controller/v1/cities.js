@@ -1,10 +1,10 @@
 'use strict';
-
+//引入city model
 import Cities from '../../models/v1/cities'
 import pinyin from "pinyin"
 import AddressComponent from '../../prototype/addressComponent'
 
-
+//继承AddressComponent
 class CityHandle extends AddressComponent{
     constructor(){
         super()
@@ -12,6 +12,7 @@ class CityHandle extends AddressComponent{
         this.getExactAddress = this.getExactAddress.bind(this);
         this.pois = this.pois.bind(this);
     }
+    //获取城市接口  包含定位，热门，和分组
     async getCity(req, res, next){
         const type = req.query.type;
         let cityInfo;
@@ -42,6 +43,7 @@ class CityHandle extends AddressComponent{
             });
         }
     }
+    //通过城市ID去获取详细信息
     async getCityById(req, res, next){
         const cityid = req.params.id;
         if (isNaN(cityid)) {

@@ -15130,7 +15130,7 @@ export default {
             pinyin: "lintongqu"
         }
     ],
-    Z: [
+    Z: -[
         {
             id: 342,
             name: "张掖",

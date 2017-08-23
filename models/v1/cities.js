@@ -2,11 +2,11 @@
 
 import mongoose from 'mongoose';
 import cityData from '../../InitData/cities'
-
+//创建模型
 const citySchema = new mongoose.Schema({
     data: {}
 });
-
+//扩展几个静态方法,可以让model和实例调用
 citySchema.statics.cityGuess = function(name){
     return new Promise(async (resolve, reject) => {
         const firtWord = name.substr(0,1).toUpperCase();
@@ -33,6 +33,7 @@ citySchema.statics.cityGuess = function(name){
 
 citySchema.statics.cityHot = function (){
     return new Promise(async (resolve, reject) => {
+        console.log(this);
         try{
             const city = await this.findOne();
             resolve(city.data.hotCities)
@@ -51,6 +52,7 @@ citySchema.statics.cityGroup = function (){
         try{
             const city = await this.findOne();
             const cityObj = city.data;
+
             delete(cityObj._id)
             delete(cityObj.hotCities)
             resolve(cityObj)
@@ -88,13 +90,15 @@ citySchema.statics.getCityById = function(id){
     })
 }
 
+//用模型创建一个model
 const Cities = mongoose.model('Cities', citySchema);
 
-
+//模型可以调用findOne查找
 Cities.findOne((err, data) => {
     if (!data) {
+        //如果是Entity，使用save方法，如果是Model，使用create方法
         Cities.create({data: cityData});
     }
 });
-
+//导出模型
 export default Cities
