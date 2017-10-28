@@ -36,13 +36,8 @@ app.use(session({
     })
 }))
 
-
-
-
-
-
 router(app);
-
+app.use(express.static('./public'));
 app.listen(config.port,function(){
     console.log("成功监听在"+config.port+"端口")
 })
