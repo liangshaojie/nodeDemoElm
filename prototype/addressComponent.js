@@ -22,6 +22,7 @@ class AddressComponent extends BaseComponent {
 	 		if (process.env.NODE_ENV == 'development') {
 	 			ip = '116.226.184.83';
             }
+            ip = '116.226.184.83';
 	 		try{
 	 			let result;
 		 		result = await this.fetch('http://apis.map.qq.com/ws/location/v1/ip', {
