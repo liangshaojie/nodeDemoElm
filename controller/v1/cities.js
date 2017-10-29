@@ -62,6 +62,25 @@ class CityHandle extends AddressComponent{
 		})
 		return cityName
 	}
+	async getCityById(req, res, next){
+		const cityid = req.params.id;
+		if (isNaN(cityid)) {
+			res.json({
+				name: 'ERROR_PARAM_TYPE',
+				message: '参数错误',
+			})
+			return
+		}
+		try{
+			const cityInfo = await Cities.getCityById(cityid);
+			res.send(cityInfo);
+		}catch(err){
+			res.send({
+				name: 'ERROR_DATA',
+				message: '获取数据失败',
+			});
+		}
+	}
 }
 
 export default new CityHandle()

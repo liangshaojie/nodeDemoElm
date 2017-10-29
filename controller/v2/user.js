@@ -92,7 +92,56 @@ class User extends AddressComponent {
 			}
 
         })
-    }
+	}
+	async getInfoById(req, res, next){
+		const user_id = req.params.user_id;
+		if (!user_id || !Number(user_id)) {
+			console.log('通过ID获取用户信息失败')
+			res.send({
+				status: 0,
+				type: 'GET_USER_INFO_FAIELD',
+				message: '通过用户ID获取用户信息失败',
+			})
+			return 
+		}
+		try{
+			const userinfo = await UserInfoModel.findOne({user_id}, '-_id');
+			res.send(userinfo) 
+		}catch(err){
+			console.log('通过用户ID获取用户信息失败', err);
+			res.send({
+				status: 0,
+				type: 'GET_USER_INFO_FAIELD',
+				message: '通过用户ID获取用户信息失败',
+			})
+		}
+	}
+	async getInfo(req, res, next){
+		const sid = req.session.user_id;
+		const qid = req.query.user_id;
+		const user_id = sid || qid;
+		if (!user_id || !Number(user_id)) {
+			console.log('获取用户信息的参数user_id无效', user_id)
+			res.send({
+				status: 0,
+				type: 'GET_USER_INFO_FAIELD',
+				message: '通过session获取用户信息失败',
+			})
+			return 
+		}
+		try{
+			const userinfo = await UserInfoModel.findOne({user_id}, '-_id');
+			res.send(userinfo) 
+		}catch(err){
+			console.log('通过session获取用户信息失败', err);
+			res.send({
+				status: 0,
+				type: 'GET_USER_INFO_FAIELD',
+				message: '通过session获取用户信息失败',
+			})
+		}
+	}
+	
 
     encryption(password){
 		const newpassword = this.Md5(this.Md5(password).substr(2, 7) + this.Md5(password));
