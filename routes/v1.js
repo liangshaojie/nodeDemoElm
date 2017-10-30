@@ -6,6 +6,7 @@ import User from '../controller/v2/user'
 import SearchPlace from '../controller/v1/search'
 import Carts from '../controller/v1/carts'
 import Address from '../controller/v1/address'
+import Order from '../controller/v1/order'
 const router = express.Router();
 
 router.get('/cities', CityHandle.getCity);
@@ -15,6 +16,8 @@ router.get('/cities/:id', CityHandle.getCityById);
 router.get('/pois', SearchPlace.search);
 router.post('/carts/checkout', Carts.checkout);
 router.get('/users/:user_id/addresses', Address.getAddress);
+router.post('/users/:user_id/addresses', Address.addAddress);
+router.post('/users/:user_id/carts/:cart_id/orders', Order.postOrder);
 
 
 export default router
