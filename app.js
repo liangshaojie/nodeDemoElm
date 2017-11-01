@@ -10,6 +10,7 @@ import cookieParser from 'cookie-parser'
 import session from 'express-session';
 import connectMongo from 'connect-mongo';
 import history from 'connect-history-api-fallback';
+import Statistic from './middlewares/statistic'
 const app = express();
 
 app.all('*', (req, res, next) => {
@@ -24,7 +25,7 @@ app.all('*', (req, res, next) => {
 	    next();
 	}
 });
-
+app.use(Statistic.apiRecord)
 app.use(cookieParser());
 const MongoStore = connectMongo(session);
 app.use(session({
