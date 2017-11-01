@@ -6,6 +6,7 @@ import v2 from './v2'
 import shopping from './shopping'
 import ugc from './ugc'
 import bos from './bos'
+import eus from './eus'
 
 export default app => {
     app.use('/v1', v1);
@@ -13,4 +14,5 @@ export default app => {
     app.use('/shopping', shopping);
     app.use('/ugc', ugc);
     app.use('/bos', bos);
+    app.use('/eus', eus);
 }

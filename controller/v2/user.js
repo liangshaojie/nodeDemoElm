@@ -13,7 +13,7 @@ class User extends AddressComponent {
 		this.login = this.login.bind(this);
 		this.encryption = this.encryption.bind(this);
 		// this.chanegPassword = this.chanegPassword.bind(this);
-		// this.updateAvatar = this.updateAvatar.bind(this);
+		this.updateAvatar = this.updateAvatar.bind(this);
     }
     async login(req, res, next){
         const cap = req.cookies.cap;
@@ -138,6 +138,37 @@ class User extends AddressComponent {
 				status: 0,
 				type: 'GET_USER_INFO_FAIELD',
 				message: '通过session获取用户信息失败',
+			})
+		}
+	}
+	async updateAvatar(req, res, next){
+		const sid = req.session.user_id;
+		const pid = req.params.user_id;
+		const user_id = sid || pid;
+		if (!user_id || !Number(user_id)) {
+			console.log('更新头像，user_id错误', user_id)
+			res.send({
+				status: 0,
+				type: 'ERROR_USERID',
+				message: 'user_id参数错误',
+			})
+			return 
+		}
+
+		try{
+			const image_path = await this.getPath(req);
+			// const image_path = await this.uploadImg(req);
+			await UserInfoModel.findOneAndUpdate({user_id}, {$set: {avatar: image_path}});
+			res.send({
+				status: 1,
+				image_path,
+			})
+		}catch(err){
+			console.log('上传图片失败', err);
+			res.send({
+				status: 0,
+				type: 'ERROR_UPLOAD_IMG',
+				message: '上传图片失败'
 			})
 		}
 	}
