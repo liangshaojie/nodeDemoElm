@@ -97,6 +97,7 @@ export default class BaseComponent {
 		}
 	}
 
+
 	async getPath(req){
 		return new Promise((resolve, reject) => {
 			const form = formidable.IncomingForm();
@@ -114,17 +115,20 @@ export default class BaseComponent {
 				const fullName = imgName + path.extname(files.file.name);
 				const repath = './public/img/' + fullName;
 				try{
-					await fs.rename(files.file.path, repath);
-					gm(repath)
-					.resize(200, 200, "!")
-					.write(repath, async (err) => {
-						if(err){
-							console.log('裁切图片失败');
-							reject('裁切图片失败');
-							return
-						}
-						resolve(fullName)
-					})
+					//这里需要的是fs方法的回调函数
+					fs.rename(files.file.path, repath,function(){
+						gm(repath)
+						.resize(200, 200, "!")
+						.write(repath, (err) => {
+							if(err){
+								console.log('裁切图片失败');
+								reject('裁切图片失败');
+								return
+							}
+							resolve(fullName)
+						})
+					});
+					
 				}catch(err){
 					console.log('保存图片失败', err);
 					fs.unlink(files.file.path)
@@ -133,7 +137,6 @@ export default class BaseComponent {
 			});
 		})
 	}
-
 	async qiniu(req, type = 'default'){
 		return new Promise((resolve, reject) => {
 			const form = formidable.IncomingForm();

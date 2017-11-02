@@ -12,7 +12,7 @@ class User extends AddressComponent {
 		super()
 		this.login = this.login.bind(this);
 		this.encryption = this.encryption.bind(this);
-		// this.chanegPassword = this.chanegPassword.bind(this);
+		this.chanegPassword = this.chanegPassword.bind(this);
 		this.updateAvatar = this.updateAvatar.bind(this);
     }
     async login(req, res, next){
@@ -172,7 +172,92 @@ class User extends AddressComponent {
 			})
 		}
 	}
-	
+	async chanegPassword(req, res, next){
+		const cap = req.cookies.cap;
+		if (!cap) {
+			console.log('验证码失效')
+			res.send({
+				status: 0,
+				type: 'ERROR_CAPTCHA',
+				message: '验证码失效',
+			})
+			return
+		}
+		const form = new formidable.IncomingForm();
+		form.parse(req, async (err, fields, files) => {
+			const {username, oldpassWord, newpassword, confirmpassword, captcha_code} = fields;
+			try{
+				if (!username) {
+					throw new Error('用户名参数错误');
+				}else if(!oldpassWord){
+					throw new Error('必须添加旧密码');
+				}else if(!newpassword){
+					throw new Error('必须填写新密码');
+				}else if(!confirmpassword){
+					throw new Error('必须填写确认密码');
+				}else if(newpassword !== confirmpassword){
+					throw new Error('两次密码不一致');
+				}else if(!captcha_code){
+					throw new Error('请填写验证码');
+				}
+			}catch(err){
+				console.log('修改密码参数错误', err);
+				res.send({
+					status: 0,
+					type: 'ERROR_QUERY',
+					message: err.message,
+				})
+				return
+			}
+			if (cap.toString() !== captcha_code.toString()) {
+				res.send({
+					status: 0,
+					type: 'ERROR_CAPTCHA',
+					message: '验证码不正确',
+				})
+				return
+			}
+			const md5password = this.encryption(oldpassWord);
+			try{
+				const user = await UserModel.findOne({username});
+				if (!user) {
+					res.send({
+						status: 0,
+						type: 'USER_NOT_FOUND',
+						message: '未找到当前用户',
+					})
+				}else if(user.password.toString() !== md5password.toString()){
+					res.send({
+						status: 0,
+						type: 'ERROR_PASSWORD',
+						message: '密码不正确',
+					})
+				}else{
+					user.password = this.encryption(newpassword);
+					user.save();
+					res.send({
+						status: 1,
+						success: '密码修改成功',
+					})
+				}
+			}catch(err){
+				console.log('修改密码失败', err);
+				res.send({
+					status: 0,
+					type: 'ERROR_CHANGE_PASSWORD',
+					message: '修改密码失败',
+				})
+			}
+		})
+	}
+	async signout(req, res, next){
+		// 删除session里面的user_id
+		delete req.session.user_id;
+		res.send({
+			status: 1,
+			message: '退出成功'
+		})
+	}
 
     encryption(password){
 		const newpassword = this.Md5(this.Md5(password).substr(2, 7) + this.Md5(password));

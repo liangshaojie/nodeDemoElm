@@ -10,6 +10,8 @@ const router = express.Router();
 router.post('/login', User.login);
 router.get('/pois/:geohash', CityHandle.pois);
 router.get('/index_entry', Entry.getEntry);
+router.post('/changepassword', User.chanegPassword);
+router.get('/signout', User.signout);
 
 
 

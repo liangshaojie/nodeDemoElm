@@ -7,6 +7,7 @@ import shopping from './shopping'
 import ugc from './ugc'
 import bos from './bos'
 import eus from './eus'
+import promotion from './promotion' 
 
 export default app => {
     app.use('/v1', v1);
@@ -15,4 +16,5 @@ export default app => {
     app.use('/ugc', ugc);
     app.use('/bos', bos);
     app.use('/eus', eus);
+    app.use('/promotion', promotion);
 }

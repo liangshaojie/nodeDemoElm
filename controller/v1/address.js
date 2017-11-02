@@ -91,6 +91,29 @@ class Address extends BaseComponent{
 			}
 		})
 	}
+	async deleteAddress(req, res, next){
+		const {user_id, address_id} = req.params;
+		if (!user_id || !Number(user_id) || !address_id || !Number(address_id)) {
+			res.send({
+				type: 'ERROR_PARAMS',
+				message: '参数错误',
+			})
+			return 
+		}
+		try{
+			await AddressModel.findOneAndRemove({id: address_id});
+			res.send({
+				status: 1,
+				success: '删除地址成功',
+			})
+		}catch(err){
+			console.log('删除收获地址失败', err);
+			res.send({
+				type: 'ERROR_DELETE_ADDRESS',
+				message: '删除收获地址失败'
+			})
+		}
+	}
 }
 
 export default new Address()
