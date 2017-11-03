@@ -7,10 +7,13 @@ class Hongbao extends BaseComponent{
 	constructor(){
 		super()
 		this.getHongbao = this.getHongbao.bind(this);
-		// this.getExpiredHongbao = this.getExpiredHongbao.bind(this);
+		this.getExpiredHongbao = this.getExpiredHongbao.bind(this);
 	}
 	async getHongbao(req, res, next){
 		this.hongbaoHandle(req, res, 'intime')
+	}
+	async getExpiredHongbao(req, res, next){
+		this.hongbaoHandle(req, res, 'expired')
 	}
 	async hongbaoHandle(req, res, type){
 		const present_status = type == 'intime'? 1 : 4;
